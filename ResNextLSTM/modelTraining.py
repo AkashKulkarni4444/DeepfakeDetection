@@ -66,10 +66,10 @@ def im_plot(tensor):
     plt.show()
 
 
-def number_of_real_and_fake_videos(data_list):
+def number_of_real_and_fake_videos(data_list,args):
     header_list = ["file", "label"]
-    train_labels = pd.read_csv('D:/IIIT/IIIT_Shri_City/BTP/code/COMP90055_Research_Project-master/ResNextLSTM/datasetDict_video_224/fake/Deepfakes/trainDataSet.csv',names=header_list)
-    test_labels = pd.read_csv('D:/IIIT/IIIT_Shri_City/BTP/code/COMP90055_Research_Project-master/ResNextLSTM/datasetDict_video_224/fake/Deepfakes/testDataSet.csv',names=header_list)
+    train_labels = pd.read_csv('D:/IIIT/IIIT_Shri_City/BTP/code/COMP90055_Research_Project-master/ResNextLSTM/datasetDict_video_224/fake/'+args.target+'/trainDataSet.csv',names=header_list)
+    test_labels = pd.read_csv('D:/IIIT/IIIT_Shri_City/BTP/code/COMP90055_Research_Project-master/ResNextLSTM/datasetDict_video_224/fake/'+args.target+'/testDataSet.csv',names=header_list)
     lab = pd.concat([train_labels, test_labels], ignore_index=True)
     fake = 0
     real = 0
@@ -194,8 +194,8 @@ def test(epoch, model, data_loader, criterion):
 
 def main(args):
     header_list = ["file", "label"]
-    train_labels = pd.read_csv('D:/IIIT/IIIT_Shri_City/BTP/code/COMP90055_Research_Project-master/ResNextLSTM/datasetDict_video_224/fake/Deepfakes/trainDataSet.csv',names=header_list)
-    test_labels = pd.read_csv('D:/IIIT/IIIT_Shri_City/BTP/code/COMP90055_Research_Project-master/ResNextLSTM/datasetDict_video_224/fake/Deepfakes/testDataSet.csv',names=header_list)
+    train_labels = pd.read_csv('D:/IIIT/IIIT_Shri_City/BTP/code/COMP90055_Research_Project-master/ResNextLSTM/datasetDict_video_224/fake/'+args.target+'/trainDataSet.csv',names=header_list)
+    test_labels = pd.read_csv('D:/IIIT/IIIT_Shri_City/BTP/code/COMP90055_Research_Project-master/ResNextLSTM/datasetDict_video_224/fake/'+args.target+'/testDataSet.csv',names=header_list)
     labels = pd.concat([train_labels, test_labels], ignore_index=True)
     train_videos=train_labels.to_numpy().tolist()
     valid_videos=test_labels.to_numpy().tolist()
@@ -203,8 +203,8 @@ def main(args):
     print("train : ", len(train_videos))
     print("test : ", len(valid_videos))
     
-    print("TRAIN: ", "Real:", number_of_real_and_fake_videos(train_videos)[0], " Fake:", number_of_real_and_fake_videos(train_videos)[1])
-    print("TEST: ", "Real:", number_of_real_and_fake_videos(valid_videos)[0], " Fake:", number_of_real_and_fake_videos(valid_videos)[1])
+    print("TRAIN: ", "Real:", number_of_real_and_fake_videos(train_videos,args)[0], " Fake:", number_of_real_and_fake_videos(train_videos,args)[1])
+    print("TEST: ", "Real:", number_of_real_and_fake_videos(valid_videos,args)[0], " Fake:", number_of_real_and_fake_videos(valid_videos,args)[1])
 
     im_size = 224
     mean = [0.485, 0.456, 0.406]
@@ -217,12 +217,12 @@ def main(args):
         transforms.Normalize(mean, std)
     ])
 
-    test_transforms = transforms.Compose([
-        transforms.ToPILImage(),
-        transforms.Resize((im_size, im_size)),
-        transforms.ToTensor(),
-        transforms.Normalize(mean, std)
-    ])
+    # test_transforms = transforms.Compose([
+    #     transforms.ToPILImage(),
+    #     transforms.Resize((im_size, im_size)),
+    #     transforms.ToTensor(),
+    #     transforms.Normalize(mean, std)
+    # ])
 
     train_data = video_dataset(train_videos, labels, sequence_length=4, transform=train_transforms)
     # val_data = video_dataset(valid_videos, labels, sequence_length=100, transform=test_transforms)
